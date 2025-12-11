@@ -35,21 +35,32 @@
                                 </form>
                             @endif
 
-                            <h3 class="text-2xl font-bold mb-2">{{ $post->title }}</h3>
-                            <div class="text-gray-600 text-sm mb-4">
-                                By {{ $post->user->name }} on {{ $post->created_at->format('M d, Y') }}
-                            </div>
-
-                            @if ($post->image_path)
-                                <div class="my-4">
-                                    <img src="{{ asset('storage/' . $post->image_path) }}" alt="{{ $post->title }}"
-                                        class="max-w-full h-auto rounded-lg shadow-md">
+                            <a href="{{ route('posts.show', $post) }}" class="block hover:opacity-90 transition">
+                                <h3 class="text-2xl font-bold mb-2 hover:text-blue-600">{{ $post->title }}</h3>
+                                <div class="text-gray-600 text-sm mb-4">
+                                    By {{ $post->user->name }} on {{ $post->created_at->format('M d, Y') }}
                                 </div>
-                            @endif
 
-                            @if ($post->body)
-                                <p class="text-gray-700 mt-4">{{ $post->body }}</p>
-                            @endif
+                                @if ($post->image_path)
+                                    <div class="my-4">
+                                        <img src="{{ asset('storage/' . $post->image_path) }}" alt="{{ $post->title }}"
+                                            class="max-w-full h-auto rounded-lg shadow-md">
+                                    </div>
+                                @endif
+
+                                @if ($post->body)
+                                    <p class="text-gray-700 mt-4">{{ Str::limit($post->body, 100) }}</p>
+                                @endif
+                            </a>
+
+                            <!-- Comment Count -->
+                            <div class="mt-4 pt-4 border-t border-gray-200">
+                                <a href="{{ route('posts.show', $post) }}"
+                                    class="text-sm text-gray-500 hover:text-gray-700">
+                                    💬 {{ $post->comments_count ?? $post->comments->count() }}
+                                    {{ Str::plural('comment', $post->comments_count ?? $post->comments->count()) }}
+                                </a>
+                            </div>
                         </div>
                     @endforeach
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -12,8 +13,8 @@ class PostController extends Controller
 {
     public function index()
     {
-        // Get all posts, latest first, with their authors
-        $posts = Post::with('user')->latest()->get();
+        // Get all posts, latest first, with their authors and comment counts
+        $posts = Post::with('user')->withCount('comments')->latest()->get();
         return view('posts.index', compact('posts'));
     }
 
@@ -135,5 +136,38 @@ class PostController extends Controller
         $post->delete();
 
         return back()->with('success', 'Post deleted successfully!');
+    }
+
+    public function show(Post $post)
+    {
+        // Load post with user, comments, and comment authors
+        $post->load(['user', 'comments.user']);
+        return view('posts.show', compact('post'));
+    }
+
+    public function storeComment(Request $request, Post $post)
+    {
+        $validated = $request->validate([
+            'body' => 'required|max:1000',
+        ]);
+
+        $post->comments()->create([
+            'body' => $validated['body'],
+            'user_id' => auth()->id(),
+        ]);
+
+        return back()->with('success', 'Comment added!');
+    }
+
+    public function destroyComment(Comment $comment)
+    {
+        // Ensure user owns the comment or is admin
+        if ($comment->user_id !== auth()->id() && !auth()->user()->is_admin) {
+            abort(403);
+        }
+
+        $comment->delete();
+
+        return back()->with('success', 'Comment deleted!');
     }
 }

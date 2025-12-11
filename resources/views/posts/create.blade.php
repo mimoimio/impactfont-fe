@@ -155,6 +155,71 @@
             }
         });
 
+        // Compress image to be under 2MB
+        async function compressImage(file, maxSizeMB = 2) {
+            const maxSizeBytes = maxSizeMB * 1024 * 1024;
+
+            // If file is already small enough, return it
+            if (file.size <= maxSizeBytes) {
+                return file;
+            }
+
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        let quality = 0.9;
+
+                        // Start with original dimensions
+                        canvas.width = width;
+                        canvas.height = height;
+
+                        const ctx = canvas.getContext('2d');
+
+                        // Function to try compression with current settings
+                        const tryCompress = () => {
+                            ctx.clearRect(0, 0, canvas.width, canvas.height);
+                            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                            canvas.toBlob((blob) => {
+                                if (blob.size <= maxSizeBytes || quality <= 0.1) {
+                                    // Success or we've tried our best
+                                    const compressedFile = new File([blob], file.name, {
+                                        type: 'image/jpeg',
+                                        lastModified: Date.now()
+                                    });
+                                    resolve(compressedFile);
+                                } else {
+                                    // Try reducing quality or size
+                                    if (quality > 0.5) {
+                                        quality -= 0.1;
+                                    } else {
+                                        // Reduce dimensions by 10%
+                                        width *= 0.9;
+                                        height *= 0.9;
+                                        canvas.width = width;
+                                        canvas.height = height;
+                                        quality = 0.9; // Reset quality
+                                    }
+                                    tryCompress();
+                                }
+                            }, 'image/jpeg', quality);
+                        };
+
+                        tryCompress();
+                    };
+                    img.onerror = reject;
+                    img.src = e.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
         async function previewMeme() {
             const imageInput = document.getElementById('imageInput');
             const topText = document.getElementById('topText').value;
@@ -172,22 +237,39 @@
                 return;
             }
 
-            const formData = new FormData();
-            formData.append('image', imageInput.files[0]);
-            formData.append('top', topText);
-            formData.append('bottom', bottomText);
-
             document.getElementById('loading').classList.remove('hidden');
             document.getElementById('preview-area').classList.add('hidden');
 
             try {
+                // Compress image before sending
+                const originalFile = imageInput.files[0];
+                const originalSize = (originalFile.size / (1024 * 1024)).toFixed(2);
+
+                const compressedFile = await compressImage(originalFile);
+                const compressedSize = (compressedFile.size / (1024 * 1024)).toFixed(2);
+
+                if (originalSize > 2) {
+                    console.log(`Image compressed from ${originalSize}MB to ${compressedSize}MB`);
+                }
+
+                const formData = new FormData();
+                formData.append('image', compressedFile);
+                formData.append('top', topText);
+                formData.append('bottom', bottomText);
+
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
                 const response = await fetch('{{ route('posts.preview') }}', {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
                     },
-                    body: formData
+                    body: formData,
+                    signal: controller.signal
                 });
+
+                clearTimeout(timeoutId);
 
                 if (!response.ok) {
                     throw new Error("Failed to generate meme");
@@ -211,10 +293,20 @@
 
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('preview-area').classList.remove('hidden');
+
             } catch (error) {
                 console.error(error);
-                alert("Failed to generate meme. Check if Flask server is running.");
                 document.getElementById('loading').classList.add('hidden');
+
+                if (error.name === 'AbortError') {
+                    alert(
+                        "Request timed out! The image file is too large or the server is taking too long to respond. Please try a smaller image (under 5MB recommended)."
+                    );
+                } else {
+                    alert(
+                        "Failed to generate meme. Please check if the Flask server is running or try a smaller image file."
+                    );
+                }
             }
         }
 
