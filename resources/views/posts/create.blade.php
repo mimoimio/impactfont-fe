@@ -1,5 +1,5 @@
 <x-app-layout>
-    <x-slot name="title">Create Meme Post</x-slot>
+    <x-slot name="title">Create new post</x-slot>
 
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -16,7 +16,7 @@
 
                     <!-- Image Upload with Drag & Drop -->
                     <div class="mb-6">
-                        <x-label for="imageInput" value="1. Upload Meme Image" />
+                        <x-label for="imageInput" value="1. Upload Image" />
                         <div id="drop-zone"
                             class="mt-2 border-4 border-dashed border-blue-300 rounded-lg p-8 text-center cursor-pointer transition-all hover:border-blue-500 hover:bg-blue-50">
                             <p id="drop-text" class="text-gray-600">Drag an image here or click to browse</p>
@@ -30,21 +30,21 @@
                     <div class="mb-4">
                         <x-label for="topText" value="2. Top Text" />
                         <x-input id="topText" name="top_text" class="block mt-1 w-full" type="text"
-                            placeholder="e.g. WHEN THE CODE" />
+                            placeholder="e.g. TOP TEXT" />
                     </div>
 
                     <!-- Bottom Text -->
                     <div class="mb-4">
                         <x-label for="bottomText" value="3. Bottom Text" />
                         <x-input id="bottomText" name="bottom_text" class="block mt-1 w-full" type="text"
-                            placeholder="e.g. FINALLY WORKS" />
+                            placeholder="e.g. BOTTOM TEXT" />
                     </div>
 
                     <!-- Title -->
                     <div class="mb-4">
                         <x-label for="title" value="4. Post Title" />
                         <x-input id="title" name="title" class="block mt-1 w-full" type="text"
-                            placeholder="Give your meme a title" required />
+                            placeholder="title" required />
                     </div>
 
                     <!-- Description/Body -->
@@ -69,7 +69,7 @@
 
                 <!-- Loading State -->
                 <div id="loading" class="hidden mt-6 text-center">
-                    <p class="text-gray-600">Generating your meme...</p>
+                    <p class="text-gray-600">Generating your impact font meme...</p>
                 </div>
 
                 <!-- Preview Area -->
