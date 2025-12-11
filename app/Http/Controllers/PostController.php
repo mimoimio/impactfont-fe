@@ -24,15 +24,21 @@ class PostController extends Controller
 
     public function preview(Request $request)
     {
-        // Forward to Flask API
-        $response = Http::attach(
-            'image',
-            file_get_contents($request->file('image')->getRealPath()),
-            $request->file('image')->getClientOriginalName()
-        )->post('http://209.97.167.159/meme', [
-            'top' => $request->input('top', ''),
-            'bottom' => $request->input('bottom', ''),
+        // Validate file size (max 10MB)
+        $request->validate([
+            'image' => 'required|image|max:10240', // 10MB in kilobytes
         ]);
+
+        // Forward to Flask API
+        $response = Http::timeout(60) // Increase timeout for large files
+            ->attach(
+                'image',
+                file_get_contents($request->file('image')->getRealPath()),
+                $request->file('image')->getClientOriginalName()
+            )->post('http://209.97.167.159/meme', [
+                'top' => $request->input('top', ''),
+                'bottom' => $request->input('bottom', ''),
+            ]);
 
         if ($response->successful()) {
             return response($response->body())
