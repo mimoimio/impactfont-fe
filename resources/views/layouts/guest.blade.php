@@ -19,7 +19,7 @@
 
     {{-- {/* Web Manifest */} --}}
     <link rel="manifest" href="/images/logo/site.webmanifest" />
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ $title ?? config('app.name', 'Laravel') }}</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
