@@ -219,6 +219,52 @@
                 reader.readAsDataURL(file);
             });
         }
+        /**
+         * Resizes an image to exactly 512x512 (stretching it) and converts it to a Blob/File.
+         * @param {File} file - The original image file.
+         * @return {Promise<File>} - The resized 512x512 file.
+         */
+        function resize(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                const size = 256
+
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        // 1. Create a canvas with the target dimensions
+                        const canvas = document.createElement('canvas');
+                        canvas.width = size;
+                        canvas.height = size;
+
+                        const ctx = canvas.getContext('2d');
+
+                        // 2. Draw the image. By specifying width and height, we force the stretch.
+                        // ctx.drawImage(image, x, y, width, height)
+                        ctx.drawImage(img, 0, 0, size, size);
+
+                        // 3. Convert canvas back to a Blob/File
+                        // '0.8' is the quality argument (0 to 1) for JPEG/WEBP
+                        canvas.toBlob((blob) => {
+                            if (!blob) {
+                                reject(new Error('Canvas is empty'));
+                                return;
+                            }
+                            // Create a new File object to mimic the original input
+                            const resizedFile = new File([blob], file.name, {
+                                type: 'image/jpeg', // Force JPEG or keep original type
+                                lastModified: Date.now(),
+                            });
+                            resolve(resizedFile);
+                        }, 'image/jpeg', 0.9); // Adjust quality here (0.9 = 90%)
+                    };
+                    img.onerror = (err) => reject(err);
+                    img.src = event.target.result;
+                };
+                reader.onerror = (err) => reject(err);
+                reader.readAsDataURL(file);
+            });
+        }
 
         async function previewMeme() {
             const imageInput = document.getElementById('imageInput');
@@ -243,14 +289,8 @@
             try {
                 // Compress image before sending
                 const originalFile = imageInput.files[0];
-                const originalSize = (originalFile.size / (1024 * 1024)).toFixed(2);
-
-                const compressedFile = await compressImage(originalFile);
-                const compressedSize = (compressedFile.size / (1024 * 1024)).toFixed(2);
-
-                if (originalSize > 2) {
-                    console.log(`Image compressed from ${originalSize}MB to ${compressedSize}MB`);
-                }
+                const compressedFile = await resize(originalFile);
+                console.log(`Image compressed from ${originalFile.size}MB to ${compressedFile.size}MB`);
 
                 const formData = new FormData();
                 formData.append('image', compressedFile);
@@ -304,7 +344,7 @@
                     );
                 } else {
                     alert(
-                        "Failed to generate meme. Please check if the Flask server is running or try a smaller image file."
+                        error
                     );
                 }
             }
