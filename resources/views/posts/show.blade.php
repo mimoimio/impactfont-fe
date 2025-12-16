@@ -2,16 +2,18 @@
     <x-app-layout>
         <x-slot name="title">{{ $post->title }}</x-slot>
         <x-slot name="ogTags">
-            <meta property="og:title" content="{{ $post->title }}" />
+            {{-- <meta property="og:title" content="{{ $post->title }}" /> --}}
             <meta property="og:type" content="image/jpeg" />
             <meta property="og:url" content="{{ route('posts.show', $post) }}" />
+            <meta property="og:image:width" content="256" />
+            <meta property="og:image:height" content="256" />
             @if ($post->image_path)
                 <meta property="og:image" content="{{ asset('storage/' . $post->image_path) }}" />
                 <meta property="og:image:alt" content="{{ $post->title }}" />
             @endif
-            @if ($post->body)
+            {{-- @if ($post->body)
                 <meta property="og:description" content="{{ Str::limit(strip_tags($post->body), 200) }}" />
-            @endif
+            @endif --}}
             <meta property="og:site_name" content="{{ config('app.name', 'Laravel') }}" />
             <meta name="twitter:card" content="summary_large_image" />
             <meta name="twitter:title" content="{{ $post->title }}" />
