@@ -3,7 +3,7 @@
         <x-slot name="title">{{ $post->title }}</x-slot>
         <x-slot name="ogTags">
             <meta property="og:title" content="{{ $post->title }}" />
-            <meta property="og:type" content="article" />
+            <meta property="og:type" content="image/jpeg" />
             <meta property="og:url" content="{{ route('posts.show', $post) }}" />
             @if ($post->image_path)
                 <meta property="og:image" content="{{ asset('storage/' . $post->image_path) }}" />
