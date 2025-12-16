@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [PostController::class, 'index'])->name('posts.index');
 
 // Public route to view all posts
-// Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
+Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
 Route::get('/post/{post}', [PostController::class, 'show'])->name('posts.show');
 
 Route::middleware([
