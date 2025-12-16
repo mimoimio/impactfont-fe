@@ -1,6 +1,27 @@
 @auth
     <x-app-layout>
         <x-slot name="title">{{ $post->title }}</x-slot>
+        <x-slot name="ogTags">
+            <meta property="og:title" content="{{ $post->title }}" />
+            <meta property="og:type" content="article" />
+            <meta property="og:url" content="{{ route('posts.show', $post) }}" />
+            @if($post->image_path)
+                <meta property="og:image" content="{{ asset('storage/' . $post->image_path) }}" />
+                <meta property="og:image:alt" content="{{ $post->title }}" />
+            @endif
+            @if($post->body)
+                <meta property="og:description" content="{{ Str::limit(strip_tags($post->body), 200) }}" />
+            @endif
+            <meta property="og:site_name" content="{{ config('app.name', 'Laravel') }}" />
+            <meta name="twitter:card" content="summary_large_image" />
+            <meta name="twitter:title" content="{{ $post->title }}" />
+            @if($post->image_path)
+                <meta name="twitter:image" content="{{ asset('storage/' . $post->image_path) }}" />
+            @endif
+            @if($post->body)
+                <meta name="twitter:description" content="{{ Str::limit(strip_tags($post->body), 200) }}" />
+            @endif
+        </x-slot>
         <x-slot name="header">
             <div class="flex justify-between items-center">
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -138,6 +159,27 @@
     </x-app-layout>
 @else
     <x-guest-layout>
+        <x-slot name="ogTags">
+            <meta property="og:title" content="{{ $post->title }}" />
+            <meta property="og:type" content="article" />
+            <meta property="og:url" content="{{ route('posts.show', $post) }}" />
+            @if($post->image_path)
+                <meta property="og:image" content="{{ asset('storage/' . $post->image_path) }}" />
+                <meta property="og:image:alt" content="{{ $post->title }}" />
+            @endif
+            @if($post->body)
+                <meta property="og:description" content="{{ Str::limit(strip_tags($post->body), 200) }}" />
+            @endif
+            <meta property="og:site_name" content="{{ config('app.name', 'Laravel') }}" />
+            <meta name="twitter:card" content="summary_large_image" />
+            <meta name="twitter:title" content="{{ $post->title }}" />
+            @if($post->image_path)
+                <meta name="twitter:image" content="{{ asset('storage/' . $post->image_path) }}" />
+            @endif
+            @if($post->body)
+                <meta name="twitter:description" content="{{ Str::limit(strip_tags($post->body), 200) }}" />
+            @endif
+        </x-slot>
         <div class="min-h-screen bg-gray-100 py-12">
             <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
                 <!-- Header -->
