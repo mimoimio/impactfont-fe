@@ -9,8 +9,10 @@
                 <div class="flex space-x-4">
                     <button onclick="sharePost()" class="text-blue-600 hover:text-blue-800 flex items-center space-x-1">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                stroke-width="2"d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                        </svg>
+
                     </button>
                     <a href="{{ route('posts.index') }}" class="text-blue-600 hover:text-blue-800">
                         ← Back to Posts
@@ -153,79 +155,80 @@
                             ← Back to Posts
                         </a>
                     </div>
+                </div>
 
-                    <!-- Post Card -->
-                    <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6 mb-6">
-                        <div class="text-gray-600 text-sm mb-4">
-                            By {{ $post->user->name }} on {{ $post->created_at->format('M d, Y') }}
-                        </div>
-
-                        @if ($post->image_path)
-                            <div class="my-4">
-                                <img src="{{ asset('storage/' . $post->image_path) }}" alt="{{ $post->title }}"
-                                    class="max-w-full h-auto rounded-lg shadow-md mx-auto">
-                            </div>
-                        @endif
-
-                        @if ($post->body)
-                            <p class="text-gray-700 mt-4">{{ $post->body }}</p>
-                        @endif
+                <!-- Post Card -->
+                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6 mb-6">
+                    <div class="text-gray-600 text-sm mb-4">
+                        By {{ $post->user->name }} on {{ $post->created_at->format('M d, Y') }}
                     </div>
 
-                    <!-- Comments Section (Guest View) -->
-                    <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
-                        <h3 class="text-lg font-semibold mb-4">Comments ({{ $post->comments->count() }})</h3>
-
-                        <!-- Login Prompt -->
-                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 text-center">
-                            <p class="text-gray-700 mb-2">Want to join the conversation?</p>
-                            <div class="space-x-4">
-                                <a href="{{ route('login') }}" class="text-blue-600 hover:text-blue-800 font-semibold">
-                                    Log in
-                                </a>
-                                <span class="text-gray-400">or</span>
-                                <a href="{{ route('register') }}" class="text-blue-600 hover:text-blue-800 font-semibold">
-                                    Sign up
-                                </a>
-                            </div>
+                    @if ($post->image_path)
+                        <div class="my-4">
+                            <img src="{{ asset('storage/' . $post->image_path) }}" alt="{{ $post->title }}"
+                                class="max-w-full h-auto rounded-lg shadow-md mx-auto">
                         </div>
+                    @endif
 
-                        <!-- Comments List -->
-                        <div class="space-y-4">
-                            @forelse ($post->comments as $comment)
-                                <div class="border-b pb-4 last:border-b-0">
-                                    <div class="flex items-center space-x-2 mb-2">
-                                        <span class="font-semibold text-gray-900">{{ $comment->user->name }}</span>
-                                        <span class="text-gray-500 text-sm">
-                                            {{ $comment->created_at->diffForHumans() }}
-                                        </span>
-                                    </div>
-                                    <p class="text-gray-700">{{ $comment->body }}</p>
+                    @if ($post->body)
+                        <p class="text-gray-700 mt-4">{{ $post->body }}</p>
+                    @endif
+                </div>
+
+                <!-- Comments Section (Guest View) -->
+                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
+                    <h3 class="text-lg font-semibold mb-4">Comments ({{ $post->comments->count() }})</h3>
+
+                    <!-- Login Prompt -->
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 text-center">
+                        <p class="text-gray-700 mb-2">Want to join the conversation?</p>
+                        <div class="space-x-4">
+                            <a href="{{ route('login') }}" class="text-blue-600 hover:text-blue-800 font-semibold">
+                                Log in
+                            </a>
+                            <span class="text-gray-400">or</span>
+                            <a href="{{ route('register') }}" class="text-blue-600 hover:text-blue-800 font-semibold">
+                                Sign up
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Comments List -->
+                    <div class="space-y-4">
+                        @forelse ($post->comments as $comment)
+                            <div class="border-b pb-4 last:border-b-0">
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <span class="font-semibold text-gray-900">{{ $comment->user->name }}</span>
+                                    <span class="text-gray-500 text-sm">
+                                        {{ $comment->created_at->diffForHumans() }}
+                                    </span>
                                 </div>
-                            @empty
-                                <p class="text-gray-500 text-center py-4">No comments yet.</p>
-                            @endforelse
-                        </div>
+                                <p class="text-gray-700">{{ $comment->body }}</p>
+                            </div>
+                        @empty
+                            <p class="text-gray-500 text-center py-4">No comments yet.</p>
+                        @endforelse
                     </div>
                 </div>
             </div>
+        </div>
 
-            <script>
-                function sharePost() {
-                    const postUrl = '{{ route('posts.show', $post) }}';
-                    const postTitle = '{{ $post->title }}';
+        <script>
+            function sharePost() {
+                const postUrl = '{{ route('posts.show', $post) }}';
+                const postTitle = '{{ $post->title }}';
 
-                    if (navigator.share) {
-                        navigator.share({
-                            title: postTitle,
-                            url: postUrl
-                        }).catch(() => {});
-                    } else {
-                        navigator.clipboard.writeText(postUrl).then(() => {
-                            alert('Link copied to clipboard!');
-                        });
-                    }
+                if (navigator.share) {
+                    navigator.share({
+                        title: postTitle,
+                        url: postUrl
+                    }).catch(() => {});
+                } else {
+                    navigator.clipboard.writeText(postUrl).then(() => {
+                        alert('Link copied to clipboard!');
+                    });
                 }
-            </script>
+            }
+        </script>
     </x-guest-layout>
 @endauth
