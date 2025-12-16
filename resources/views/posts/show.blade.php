@@ -5,20 +5,20 @@
             <meta property="og:title" content="{{ $post->title }}" />
             <meta property="og:type" content="article" />
             <meta property="og:url" content="{{ route('posts.show', $post) }}" />
-            @if($post->image_path)
+            @if ($post->image_path)
                 <meta property="og:image" content="{{ asset('storage/' . $post->image_path) }}" />
                 <meta property="og:image:alt" content="{{ $post->title }}" />
             @endif
-            @if($post->body)
+            @if ($post->body)
                 <meta property="og:description" content="{{ Str::limit(strip_tags($post->body), 200) }}" />
             @endif
             <meta property="og:site_name" content="{{ config('app.name', 'Laravel') }}" />
             <meta name="twitter:card" content="summary_large_image" />
             <meta name="twitter:title" content="{{ $post->title }}" />
-            @if($post->image_path)
+            @if ($post->image_path)
                 <meta name="twitter:image" content="{{ asset('storage/' . $post->image_path) }}" />
             @endif
-            @if($post->body)
+            @if ($post->body)
                 <meta name="twitter:description" content="{{ Str::limit(strip_tags($post->body), 200) }}" />
             @endif
         </x-slot>
@@ -163,20 +163,20 @@
             <meta property="og:title" content="{{ $post->title }}" />
             <meta property="og:type" content="article" />
             <meta property="og:url" content="{{ route('posts.show', $post) }}" />
-            @if($post->image_path)
+            @if ($post->image_path)
                 <meta property="og:image" content="{{ asset('storage/' . $post->image_path) }}" />
                 <meta property="og:image:alt" content="{{ $post->title }}" />
             @endif
-            @if($post->body)
+            @if ($post->body)
                 <meta property="og:description" content="{{ Str::limit(strip_tags($post->body), 200) }}" />
             @endif
             <meta property="og:site_name" content="{{ config('app.name', 'Laravel') }}" />
             <meta name="twitter:card" content="summary_large_image" />
             <meta name="twitter:title" content="{{ $post->title }}" />
-            @if($post->image_path)
+            @if ($post->image_path)
                 <meta name="twitter:image" content="{{ asset('storage/' . $post->image_path) }}" />
             @endif
-            @if($post->body)
+            @if ($post->body)
                 <meta name="twitter:description" content="{{ Str::limit(strip_tags($post->body), 200) }}" />
             @endif
         </x-slot>
@@ -186,7 +186,8 @@
                 <div class="mb-6 flex justify-between items-center">
                     <h1 class="text-3xl font-bold text-gray-900">{{ $post->title }}</h1>
                     <div class="flex space-x-4">
-                        <button onclick="sharePost()" class="text-blue-600 hover:text-blue-800 flex items-center space-x-1">
+                        <button onclick="sharePost()"
+                            class="text-blue-600 hover:text-blue-800 flex items-center space-x-1">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
